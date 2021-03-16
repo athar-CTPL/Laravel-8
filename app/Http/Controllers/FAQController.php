@@ -2,31 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FAQ;
 use App\Models\User;
-use App\Exports\UsersExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 
-
-class UserController extends Controller
+class FAQController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $users = User::where('status','LIKE',"%{$request->filter}%")->get();
-        $FAQ = DB::table('faq')->select('title')->get();
-        return view('dashboard',compact('users','FAQ'));
+        $FAQ = DB::table('faq')->select('title','id')->get();
         
-    }
-
-    public function export()
-    {
-        return Excel::download(new UsersExport,'users.xlsx');
+        return view('dashboard',compact('FAQ'));
     }
 
     /**
@@ -36,7 +28,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('AddFaq');
     }
 
     /**
@@ -47,7 +39,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       
+        $this->validate($request,[
+            'title'=>'required',
+            'description'=>'required',
+        ]);
+        
+        $ord_col = FAQ::max('order_column')+1;
+        
+        $FAQ = FAQ::create([
+            'title'=>$request->title,
+            'description'=>$request->description,
+            'order_column'=>$ord_col,
+        ]);
+        $users = User::all();
+        
+        return view('dashboard',compact('users'));
     }
 
     /**
@@ -58,8 +65,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $users = User::find($id);
-        return view('show',compact('users'));
+        //
     }
 
     /**
