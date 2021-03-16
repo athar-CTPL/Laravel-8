@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -30,7 +31,10 @@ Route::group(['middleware' => 'auth'], function(){
     // Route::get('/dashboard', 'App\Http\Controllers\UserController@index')->name('dashboard');
     Route::get('dashboard', [UserController::class, 'index'])->name('dashboard');
     Route::get('export', [UserController::class, 'export'])->name('export');
-    
+    Route::get('users/{id}',[UserController::class, 'show'])->name('users');
+    Route::resource('faqs', FAQController::class);
+    // Route::post('faq', [FAQController::class, 'store'])->name('faq');
+    // Route::post('faqs', [FAQController::class, 'create'])->name('faqs');
 });
 
 
